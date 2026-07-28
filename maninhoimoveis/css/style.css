@@ -1,0 +1,1042 @@
+/* ==========================================================================
+   MANINHO IMÓVEIS — Sistema de Design
+   Conceito: planta cadastral / topográfica.
+   Papel de agrimensor, tinta azul-marinho, verde-musgo e terracota queimada.
+   ========================================================================== */
+
+:root{
+  /* Cores */
+  --ink:        #1B2A3B; /* azul-marinho profundo — tinta técnica */
+  --ink-soft:   #2B3C4E;
+  --paper:      #F3EEE1; /* papel de planta */
+  --paper-dim:  #E9E1CC;
+  --clay:       #B5482D; /* terracota queimada — acento principal */
+  --clay-dark:  #93391F;
+  --moss:       #4C6B4F; /* verde-musgo — acento secundário / natureza */
+  --text:       #232620;
+  --text-soft:  #5B5B4F;
+  --line:       #C9BFA6; /* linhas/hairlines sobre o papel */
+  --line-dark:  rgba(243,238,225,0.25); /* linhas sobre fundo escuro */
+
+  /* Tipografia */
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-body:    'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Espaçamento */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 64px;
+  --space-6: 96px;
+
+  --radius: 2px; /* quase reto — planta técnica, não app fofo */
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3{
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a{ color: inherit; text-decoration: none; }
+
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--clay);
+}
+
+.container{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+/* Foco visível para acessibilidade */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--ink);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.site-header .container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--paper);
+}
+
+.logo-mark{ width: 30px; height: 30px; flex-shrink: 0; }
+
+.logo-text{
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+}
+.logo-text small{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--clay);
+  margin-top: 3px;
+}
+
+.main-nav{ display: flex; align-items: center; gap: var(--space-3); }
+
+.main-nav ul{
+  list-style: none;
+  display: flex;
+  gap: var(--space-3);
+  margin: 0; padding: 0;
+}
+
+.main-nav a{
+  position: relative;
+  color: var(--paper-dim);
+  font-size: 14.5px;
+  padding: 6px 2px 8px;
+  transition: color .2s ease;
+}
+.main-nav a::after{
+  content: "";
+  position: absolute;
+  left: 50%; right: 50%;
+  bottom: 0;
+  height: 2px;
+  background: var(--clay);
+  transition: left .28s cubic-bezier(.16,.8,.24,1), right .28s cubic-bezier(.16,.8,.24,1);
+}
+.main-nav a:hover,
+.main-nav a.is-active{ color: var(--paper); }
+.main-nav a:hover::after,
+.main-nav a.is-active::after{ left: 0; right: 0; }
+
+.nav-actions{ display: flex; align-items: center; gap: var(--space-2); }
+
+.icon-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--paper);
+  font-size: 13.5px;
+}
+.icon-btn svg{ width: 18px; height: 18px; }
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn-clay{ background: var(--clay); color: var(--paper); }
+.btn-clay:hover{ background: var(--clay-dark); }
+.btn-outline{
+  background: transparent;
+  border-color: var(--line-dark);
+  color: var(--paper);
+}
+.btn-outline:hover{ border-color: var(--paper); }
+
+.nav-toggle{ display: none; }
+
+@media (max-width: 900px){
+  .main-nav ul{ display: none; }
+  .nav-toggle{
+    display: inline-flex;
+    background: none; border: none; color: var(--paper); cursor: pointer;
+  }
+}
+
+/* ==========================================================================
+   HERO — planta topográfica
+   ========================================================================== */
+
+.hero{
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+  padding: var(--space-6) 0 var(--space-5);
+}
+
+.hero-contours{
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.hero-inner{
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-4);
+  align-items: end;
+}
+
+.hero h1{
+  color: var(--paper);
+  font-size: clamp(34px, 4.6vw, 58px);
+  line-height: 1.05;
+  max-width: 12ch;
+}
+
+.hero p.lead{
+  color: var(--paper-dim);
+  font-size: 17px;
+  max-width: 46ch;
+  margin-bottom: var(--space-3);
+}
+
+.coord-tag{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--paper-dim);
+  border: 1px solid var(--line-dark);
+  padding: 4px 10px;
+  display: inline-block;
+  margin-bottom: var(--space-2);
+}
+
+/* Cartão de busca sobreposto, estilo "ficha de plano" */
+.search-card{
+  background: var(--paper);
+  color: var(--text);
+  padding: var(--space-3);
+  position: relative;
+  border: 1px solid var(--line);
+}
+.search-card::before{
+  /* marca de canto, como grampo de topografia */
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 18px; height: 18px;
+  border-top: 3px solid var(--clay);
+  border-left: 3px solid var(--clay);
+}
+.search-card::after{
+  content: "";
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 18px; height: 18px;
+  border-bottom: 3px solid var(--clay);
+  border-right: 3px solid var(--clay);
+}
+
+.search-tabs{
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-2);
+}
+.search-tabs button{
+  flex: 1;
+  padding: 10px 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--paper-dim);
+  border: none;
+  cursor: pointer;
+  color: var(--text-soft);
+}
+.search-tabs button.is-active{
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.search-fields{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.field label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+.field select, .field input{
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border-radius: var(--radius);
+}
+
+.search-card .btn{ width: 100%; justify-content: center; }
+
+@media (max-width: 900px){
+  .hero-inner{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   SEÇÕES / DIVISORES
+   ========================================================================== */
+
+section{ padding: var(--space-5) 0; }
+
+.section-head{
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.section-head::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .9s cubic-bezier(.16,.8,.24,1) .12s;
+}
+.section-head.is-visible::after{ transform: scaleX(1); }
+
+.section-head .ver-todos{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--clay);
+  white-space: nowrap;
+}
+
+.contour-divider{
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   CATEGORIAS (Loteamentos / Apartamentos / Casas)
+   ========================================================================== */
+
+.categorias-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.categoria-card{
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+  position: relative;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.categoria-card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(27,42,59,0.10);
+}
+
+/* Cantos de prancheta: aparecem no hover, como se o cartão fosse "grampeado" */
+.categoria-card::before, .categoria-card::after,
+.imovel-card::before, .imovel-card::after{
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.categoria-card::before, .imovel-card::before{
+  top: -1px; left: -1px;
+  border-top: 2px solid var(--clay);
+  border-left: 2px solid var(--clay);
+  transform: translate(4px, 4px);
+}
+.categoria-card::after, .imovel-card::after{
+  bottom: -1px; right: -1px;
+  border-bottom: 2px solid var(--clay);
+  border-right: 2px solid var(--clay);
+  transform: translate(-4px, -4px);
+}
+.categoria-card:hover::before, .categoria-card:hover::after,
+.imovel-card:hover::before, .imovel-card:hover::after{
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.categoria-card .plot-icon{ width: 46px; height: 46px; color: var(--moss); margin-bottom: var(--space-2); }
+.categoria-card h3{ font-size: 21px; margin-bottom: 6px; }
+.categoria-card p{ color: var(--text-soft); font-size: 14px; margin-bottom: var(--space-2); }
+.categoria-card .ir{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--clay);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* O ícone de linha se desenha sozinho quando o cartão entra na tela */
+.reveal .plot-icon path{
+  stroke-dasharray: 140;
+  stroke-dashoffset: 140;
+  transition: stroke-dashoffset 1s cubic-bezier(.3,.6,.2,1) .2s;
+}
+.reveal.is-visible .plot-icon path{ stroke-dashoffset: 0; }
+
+@media (max-width: 900px){
+  .categorias-grid{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   IMÓVEIS EM DESTAQUE — cards
+   ========================================================================== */
+
+.imoveis-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.imovel-card{
+  background: #fff;
+  border: 1px solid var(--line);
+  position: relative;
+}
+
+.imovel-thumb{
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+.imovel-thumb svg{ width: 100%; height: 100%; }
+
+/* Ilustração da miniatura também se desenha, com um pequeno atraso a mais que o card */
+.reveal .imovel-thumb svg path,
+.reveal .imovel-thumb svg line{
+  stroke-dasharray: 480;
+  stroke-dashoffset: 480;
+  transition: stroke-dashoffset 1.3s cubic-bezier(.3,.6,.2,1) .35s;
+}
+.reveal.is-visible .imovel-thumb svg path,
+.reveal.is-visible .imovel-thumb svg line{ stroke-dashoffset: 0; }
+
+.imovel-tag{
+  position: absolute;
+  top: 10px; left: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+}
+
+.fav-btn{
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 32px; height: 32px;
+  background: rgba(243,238,225,0.92);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.fav-btn svg{ width: 16px; height: 16px; color: var(--clay); }
+
+.imovel-body{ padding: var(--space-2) var(--space-3) var(--space-3); }
+.imovel-body h4{ font-family: var(--font-display); font-size: 18px; margin: 0 0 4px; color: var(--ink); }
+.imovel-body .local{ font-size: 13px; color: var(--text-soft); margin-bottom: var(--space-2); }
+
+.imovel-attrs{
+  display: flex;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+.imovel-attrs span{ display: inline-flex; align-items: center; gap: 4px; }
+
+.imovel-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-2);
+}
+.imovel-valor{ font-family: var(--font-display); font-size: 19px; color: var(--clay); }
+.imovel-valor small{ font-family: var(--font-mono); font-size: 11px; color: var(--text-soft); display:block; }
+
+@media (max-width: 900px){
+  .imoveis-grid{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px){
+  .imoveis-grid{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   FAIXA "COMO FUNCIONA" (visita presencial)
+   ========================================================================== */
+
+.como-funciona{ background: var(--paper-dim); }
+
+.passos{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+.passo{ padding-right: var(--space-2); }
+.passo .n{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--clay);
+  border-bottom: 1px solid var(--line);
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: var(--space-1);
+}
+.passo h4{ font-family: var(--font-display); font-size: 17px; margin: 0 0 6px; color: var(--ink); }
+.passo p{ font-size: 13.5px; color: var(--text-soft); margin: 0; }
+
+@media (max-width: 900px){ .passos{ grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px){ .passos{ grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   CTA ANUNCIE CONOSCO
+   ========================================================================== */
+
+.cta-anuncie{
+  background: var(--ink);
+  color: var(--paper);
+}
+.cta-anuncie .container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.cta-anuncie h2{ color: var(--paper); font-size: 28px; max-width: 20ch; }
+.cta-anuncie p{ color: var(--paper-dim); max-width: 42ch; }
+
+@media (max-width: 900px){
+  .cta-anuncie .container{ flex-direction: column; align-items: flex-start; text-align: left; }
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.site-footer{
+  background: var(--ink);
+  color: var(--paper-dim);
+  border-top: 1px solid var(--line-dark);
+  padding: var(--space-4) 0 var(--space-3);
+  font-size: 14px;
+}
+.footer-grid{
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.footer-grid h5{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  margin: 0 0 var(--space-2);
+}
+.footer-grid ul{ list-style: none; margin: 0; padding: 0; }
+.footer-grid li{ margin-bottom: 8px; }
+.footer-grid a:hover{ color: var(--paper); }
+
+.footer-bottom{
+  border-top: 1px solid var(--line-dark);
+  padding-top: var(--space-2);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--text-soft);
+  color: #94A0A9;
+}
+
+@media (max-width: 900px){
+  .footer-grid{ grid-template-columns: 1fr; }
+  .footer-bottom{ flex-direction: column; gap: 6px; }
+}
+
+/* ==========================================================================
+   BOTÃO FLUTUANTE WHATSAPP
+   ========================================================================== */
+
+.whatsapp-float{
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 60;
+  width: 56px; height: 56px;
+  background: var(--moss);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(27,42,59,0.35);
+}
+.whatsapp-float svg{ width: 26px; height: 26px; }
+
+@media (prefers-reduced-motion: no-preference){
+  .categoria-card, .imovel-card{ transition: transform .2s ease; }
+}
+
+/* ==========================================================================
+   ANIMAÇÕES — planta que se revela conforme você rola a página
+   ========================================================================== */
+
+/* Header se recolhe suavemente ao rolar */
+.site-header{ transition: height .25s ease; }
+.site-header .container{ transition: height .25s ease; }
+.site-header.is-scrolled{ box-shadow: 0 4px 18px rgba(0,0,0,0.18); }
+.site-header.is-scrolled .container{ height: 60px; }
+.site-header.is-scrolled .logo-mark{ width: 24px; height: 24px; }
+.site-header.is-scrolled .logo-text small{ display: none; }
+
+/* Elementos revelados ao entrar na tela */
+.reveal{
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);
+}
+.reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+/* Atraso escalonado dentro de grades (efeito de "camadas se assentando") */
+.stagger > *:nth-child(1){ transition-delay: 0s;   }
+.stagger > *:nth-child(2){ transition-delay: .09s; }
+.stagger > *:nth-child(3){ transition-delay: .18s; }
+.stagger > *:nth-child(4){ transition-delay: .27s; }
+
+/* Linhas de contorno do hero se desenham sozinhas, como um traço de agrimensor */
+.hero-contours path{
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+  animation: draw-contour 2.4s cubic-bezier(.3,.6,.2,1) forwards;
+}
+.hero-contours path:nth-of-type(1){ animation-delay: .1s; }
+.hero-contours path:nth-of-type(2){ animation-delay: .3s; }
+.hero-contours path:nth-of-type(3){ animation-delay: .5s; }
+.hero-contours path:nth-of-type(4){ animation-delay: .2s; }
+.hero-contours path:nth-of-type(5){ animation-delay: .4s; }
+
+@keyframes draw-contour{
+  to{ stroke-dashoffset: 0; }
+}
+
+/* Marca de canto do cartão de busca "grampeia" ao aparecer */
+.search-card::before, .search-card::after{
+  transition: opacity .5s ease .9s, transform .5s ease .9s;
+}
+.search-card.reveal::before, .search-card.reveal::after{ opacity: 0; transform: scale(.6); }
+.search-card.reveal.is-visible::before, .search-card.reveal.is-visible::after{ opacity: 1; transform: scale(1); }
+
+/* Pulso discreto no botão do WhatsApp, como um marcador de localização ativo */
+.whatsapp-float{ position: fixed; }
+.whatsapp-float::after{
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--moss);
+  opacity: .55;
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+@keyframes pulse-ring{
+  0%   { transform: scale(.85); opacity: .55; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* Respeita quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity: 1; transform: none; transition: none; }
+  .hero-contours path{ animation: none; stroke-dashoffset: 0; }
+  .whatsapp-float::after{ animation: none; display: none; }
+  .site-header{ transition: none; }
+  .section-head::after{ transform: scaleX(1); transition: none; }
+  .reveal .plot-icon path,
+  .reveal .imovel-thumb svg path,
+  .reveal .imovel-thumb svg line{ stroke-dashoffset: 0; transition: none; }
+  .hero-contours{ transform: none !important; }
+}
+
+/* ==========================================================================
+   BREADCRUMB
+   ========================================================================== */
+
+.breadcrumb{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--paper-dim);
+  letter-spacing: 0.03em;
+}
+.breadcrumb a{ color: var(--paper-dim); }
+.breadcrumb a:hover{ color: var(--paper); }
+.breadcrumb span{ color: var(--clay); }
+
+/* ==========================================================================
+   PAGE HERO — versão compacta do hero, para páginas internas
+   ========================================================================== */
+
+.page-hero{
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+  padding: var(--space-4) 0 var(--space-4);
+}
+.page-hero .hero-contours{ opacity: 0.28; }
+.page-hero-inner{ position: relative; z-index: 2; }
+.page-hero h1{
+  color: var(--paper);
+  font-size: clamp(28px, 3.4vw, 40px);
+  margin: var(--space-1) 0 6px;
+}
+.page-hero p{
+  color: var(--paper-dim);
+  max-width: 56ch;
+  margin: 0;
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   LISTAGEM — filtros + resultados
+   ========================================================================== */
+
+.listing-layout{
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.filter-panel{
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+  position: sticky;
+  top: 96px;
+}
+.filter-panel h3{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--line);
+}
+.filter-group{ margin-bottom: var(--space-2); }
+.filter-group label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+.filter-group select, .filter-group input{
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  border-radius: var(--radius);
+}
+.filter-checkbox{
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; color: var(--text);
+  cursor: pointer;
+}
+.filter-checkbox input{ width: auto; }
+
+.results-toolbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  font-size: 14px;
+  color: var(--text-soft);
+}
+.results-toolbar select{
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+}
+
+@media (max-width: 900px){
+  .listing-layout{ grid-template-columns: 1fr; }
+  .filter-panel{ position: static; }
+}
+
+/* Selos de status sobre a miniatura */
+.status-reservado{ background: var(--clay) !important; }
+.status-vendido{ background: var(--text-soft) !important; }
+
+/* Paginação */
+.pagination{
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.pagination a, .pagination span{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+}
+.pagination a:hover{ border-color: var(--clay); color: var(--clay); }
+.pagination .is-current{ background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* Estado vazio (sem resultados) */
+.empty-state{
+  text-align: center;
+  padding: var(--space-5) var(--space-3);
+  border: 1px dashed var(--line);
+  color: var(--text-soft);
+}
+.empty-state h3{ color: var(--ink); margin-bottom: 6px; }
+
+/* ==========================================================================
+   FORMULÁRIOS (Anuncie Conosco, Contato, Login)
+   ========================================================================== */
+
+.form-shell{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.form-card{
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: var(--space-4);
+  position: relative;
+}
+.form-card::before{
+  content: "";
+  position: absolute; top: -1px; left: -1px;
+  width: 18px; height: 18px;
+  border-top: 3px solid var(--clay);
+  border-left: 3px solid var(--clay);
+}
+.form-card::after{
+  content: "";
+  position: absolute; bottom: -1px; right: -1px;
+  width: 18px; height: 18px;
+  border-bottom: 3px solid var(--clay);
+  border-right: 3px solid var(--clay);
+}
+
+.form-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.form-grid .full{ grid-column: 1 / -1; }
+
+.form-field label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 5px;
+}
+.form-field input, .form-field select, .form-field textarea{
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border-radius: var(--radius);
+}
+.form-field textarea{ resize: vertical; min-height: 110px; }
+.form-field.full{ grid-column: 1 / -1; }
+
+.form-card form{ margin-top: var(--space-3); }
+.form-card .btn{ margin-top: var(--space-2); width: 100%; justify-content: center; }
+
+.info-side h2{ font-size: 26px; }
+.info-side p{ color: var(--text-soft); max-width: 42ch; }
+
+.info-list{ list-style: none; margin: var(--space-3) 0 0; padding: 0; }
+.info-list li{
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+}
+.info-list li:last-child{ border-bottom: 1px solid var(--line); }
+.info-list svg{ width: 20px; height: 20px; color: var(--moss); flex-shrink: 0; margin-top: 2px; }
+
+@media (max-width: 900px){
+  .form-shell{ grid-template-columns: 1fr; }
+  .form-grid{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   DETALHE DO IMÓVEL — galeria e ficha técnica
+   ========================================================================== */
+
+.imovel-detalhe{
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.gallery-main{
+  aspect-ratio: 16 / 10;
+  background: var(--paper-dim);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+  transition: opacity .15s ease;
+}
+.gallery-main svg{ width: 100%; height: 100%; }
+
+.gallery-thumbs{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.gallery-thumbs .thumb{
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  overflow: hidden;
+}
+.gallery-thumbs .thumb svg{ width: 100%; height: 100%; }
+.gallery-thumbs .thumb.is-active{ border-color: var(--clay); border-width: 2px; }
+
+.specs-card{
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+}
+.specs-card .valor-grande{
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: var(--clay);
+  margin-bottom: var(--space-1);
+}
+.specs-card .financiamento-tag{
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--moss);
+  border: 1px solid var(--moss);
+  padding: 3px 8px;
+  margin-bottom: var(--space-2);
+}
+
+.specs-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+.specs-grid dt{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  padding: 10px 0 2px;
+  border-bottom: 1px solid var(--line);
+}
+.specs-grid dd{
+  margin: 0;
+  padding: 0 0 10px;
+  font-size: 14.5px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.contact-actions{ display: grid; gap: 10px; margin-top: var(--space-2); }
+.contact-actions .btn{ width: 100%; justify-content: center; }
+
+.descricao-imovel{
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+.descricao-imovel p{ color: var(--text-soft); max-width: 70ch; }
+
+@media (max-width: 900px){
+  .imovel-detalhe{ grid-template-columns: 1fr; }
+}
